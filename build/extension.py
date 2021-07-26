@@ -6,6 +6,7 @@ try:
 except ModuleNotFoundError:
     import os
     os.system('pip3 install youtube-search-python')
+    from youtubesearchpython import VideosSearch
 
 
 ext = vscode.Extension(
