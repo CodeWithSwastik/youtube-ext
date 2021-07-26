@@ -1,0 +1,27 @@
+{
+  "name": "youtube",
+  "displayName": "Youtube",
+  "description": "This extension lets you search for youtube videos.",
+  "version": "1.0.0",
+  "icon": "images/youtube.png",
+  "engines": {
+    "vscode": "^1.58.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./build/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "youtube.search",
+        "title": "Search",
+        "category": "Youtube"
+      }
+    ]
+  },
+  "activationEvents": [
+    "onCommand:youtube.search"
+  ],
+  "publisher": "Swas"
+}
