@@ -1,2 +1,2 @@
-vscode-ext
+vscode-ext==1.4.0
 youtube-search-python

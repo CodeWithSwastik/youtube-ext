@@ -1,24 +1,16 @@
+
 # Built using vscode-ext
 
-try:
-    import vscode
-except ModuleNotFoundError:
-    import os
-    os.system('pip3 install vscode-ext')
-    import vscode
-
-try:
-    from youtubesearchpython import VideosSearch
-except ModuleNotFoundError:
-    import os
-    os.system('pip3 install youtube-search-python')
-    from youtubesearchpython import VideosSearch
+import os
+import sys
+import vscode
+from youtubesearchpython import VideosSearch
 
 
 ext = vscode.Extension(
         name='youtube', 
         display_name='Youtube', 
-        version='1.0.1', 
+        version='1.0.2', 
         description='This extension lets you search for youtube videos.'
     )
 
@@ -42,16 +34,16 @@ def search():
         views = result['viewCount']['text']
         duration = result['duration']
         detail = f'Channel: {channel} | Views: {views} | Duration: {duration}'
-        data.append({'label': result['title'], 'detail': detail, 'link': result['link']})
+        item = vscode.ext.QuickPickItem(result['title'],description=detail, link=result['link'])
+        data.append(item)
 
-    res = vscode.window.show_quick_pick(data, {})
+    res = vscode.window.show_quick_pick(data)
     if not res:
         return
-    vscode.env.open_external(res['link'])
+    vscode.env.open_external(res.link)
 
 
 
-import sys
 def ipc_main():
     globals()[sys.argv[1]]()
 

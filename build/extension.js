@@ -3,8 +3,16 @@ const vscode = require("vscode");
 const spawn = require("child_process").spawn;
 const path = require("path");
 const pythonPath = path.join(__dirname, "extension.py");
+const requirements = path.join(__dirname, "../requirements.txt");
+const osvar = process.platform;
 
-function executeCommands(pythonProcess, data) {
+if (osvar == "win32") {
+  spawn("python", ["-m", "pip", "install", "-r", requirements]);
+} else {
+  spawn("python3", ["-m", "pip3", "install", "-r", requirements]);
+}
+
+function executeCommands(pythonProcess, data, globalStorage) {
   data = data
     .toString()
     .split("\n")
@@ -35,6 +43,20 @@ function executeCommands(pythonProcess, data) {
     case "EP":
       pythonProcess.stdin.write(vscode.env[args[0]] + "\n");
       break;
+    case "BM":
+      let dis;
+      if (args.length > 1) {
+        dis = vscode.window.setStatusBarMessage(args[0], parseInt(args[1]));
+      } else {
+        dis = vscode.window.setStatusBarMessage(args[0]);
+      }
+      let id = "id" + Math.random().toString(16).slice(2);
+      globalStorage[id] = dis;
+      pythonProcess.stdin.write(id + "\n");
+      break;
+    case "DI":
+      globalStorage[args[0]].dispose();
+      break;
     default:
       console.log("Couldn't parse this: " + data);
   }
@@ -45,12 +67,13 @@ function executeCommands(pythonProcess, data) {
 }
 
 function activate(context) {
+let globalStorage = {}
 console.log("Youtube has been activated");
 let search = vscode.commands.registerCommand('youtube.search',async function () {
 let py = spawn("python", [pythonPath,"search"]);
 
 py.stdout.on("data", (data) => {
-    executeCommands(py, data);
+    executeCommands(py, data, globalStorage);
 });
 py.stderr.on("data", (data) => {
     console.error(`An Error occurred in the python script: ${data}`);
