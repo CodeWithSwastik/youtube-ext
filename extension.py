@@ -5,7 +5,7 @@ from youtubesearchpython import VideosSearch
 ext = vscode.Extension(
         name='youtube', 
         display_name='Youtube', 
-        version='1.0.2', 
+        version='1.1.0', 
         description='This extension lets you search for youtube videos.'
     )
 
@@ -15,10 +15,16 @@ ext.set_default_category(ext.display_name)
 def on_activate():
     return 'Youtube has been activated'
 
-@ext.command()
+@ext.command(keybind='CTRL+F9')
 def search():
-    options = vscode.ext.InputBoxOptions(title='What would you like to search for?')
-    res = vscode.window.show_input_box(options)
+    editor = vscode.window.ActiveTextEditor()
+    if not editor:
+        options = vscode.ext.InputBoxOptions(title='What would you like to search for?')
+        res = vscode.window.show_input_box(options)
+    else:
+        doc = editor.document
+        res = f'{doc.get_text(editor.selection)} + {doc.language_id}'
+
     if not res:
         return
     data = []
@@ -29,9 +35,10 @@ def search():
         views = result['viewCount']['text']
         duration = result['duration']
         detail = f'Channel: {channel} | Views: {views} | Duration: {duration}'
-        item = vscode.ext.QuickPickItem(result['title'],description=detail, link=result['link'])
+        item = vscode.ext.QuickPickItem(result['title'],detail, link=result['link'])
         data.append(item)
-
+    if len(data) == 0:
+        return vscode.show_info_message(f'No videos found for the search term: {res}')
     res = vscode.window.show_quick_pick(data)
     if not res:
         return

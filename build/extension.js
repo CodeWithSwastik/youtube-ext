@@ -57,6 +57,30 @@ function executeCommands(pythonProcess, data, globalStorage) {
     case "DI":
       globalStorage[args[0]].dispose();
       break;
+    case "AT":
+      pythonProcess.stdin.write(
+        JSON.stringify(vscode.window.activeTextEditor) + "\n"
+      );
+      break;
+    case "GT":
+      let editor = vscode.window.activeTextEditor;
+      let res;
+      if (!editor) {
+        res = undefined;
+      } else if (args.length > 0) {
+        let { start, end } = JSON.parse(args[0]);
+        let range = new vscode.Range(
+          start.line,
+          start.character,
+          end.line,
+          end.character
+        );
+        res = editor.document.getText(range);
+      } else {
+        res = editor.document.getText();
+      }
+      pythonProcess.stdin.write(JSON.stringify(res) + "\n");
+      break;
     default:
       console.log("Couldn't parse this: " + data);
   }
@@ -70,7 +94,8 @@ function activate(context) {
 let globalStorage = {}
 console.log("Youtube has been activated");
 let search = vscode.commands.registerCommand('youtube.search',async function () {
-let py = spawn("python", [pythonPath,"search"]);
+let funcName = "search"; let pyVar = "python";
+let py = spawn(pyVar, [pythonPath, funcName]);
 
 py.stdout.on("data", (data) => {
     executeCommands(py, data, globalStorage);

@@ -2,7 +2,7 @@
   "name": "youtube",
   "displayName": "Youtube",
   "description": "This extension lets you search for youtube videos.",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "icon": "images/youtube.png",
   "repository": {
     "type": "git",
@@ -21,6 +21,12 @@
         "command": "youtube.search",
         "title": "Search",
         "category": "Youtube"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "youtube.search",
+        "key": "CTRL+F9"
       }
     ]
   },
