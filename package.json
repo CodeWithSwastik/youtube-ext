@@ -2,7 +2,7 @@
   "name": "youtube",
   "displayName": "Youtube",
   "description": "This extension lets you search for youtube videos.",
-  "version": "1.1.0",
+  "version": "1.1.2",
   "icon": "images/youtube.png",
   "repository": {
     "type": "git",
