@@ -8,7 +8,7 @@ from youtubesearchpython import VideosSearch
 ext = vscode.Extension(
         name='youtube', 
         display_name='Youtube', 
-        version='1.1.2', 
+        version='1.1.3', 
         description='This extension lets you search for youtube videos.'
     )
 
@@ -41,7 +41,7 @@ def search():
         item = vscode.QuickPickItem(result['title'],detail, link=result['link'])
         data.append(item)
     if len(data) == 0:
-        return vscode.show_info_message(f'No videos found for the search term: {res}')
+        return vscode.window.show_error_message(f'No videos found for the search term: {res}')
     res = vscode.window.show_quick_pick(data)
     if not res:
         return

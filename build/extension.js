@@ -52,6 +52,13 @@ function executeCommands(pythonProcess, data, globalStorage) {
     case "EP":
       pythonProcess.stdin.write(JSON.stringify(vscode.env[args[0]]) + "\n");
       break;
+    case "GC":
+      pythonProcess.stdin.write(
+        JSON.stringify(
+          vscode.workspace.getConfiguration(args[0]).get(args[1])
+        ) + "\n"
+      );
+      break;
     case "BM":
       let dis;
       if (args.length > 1) {
@@ -115,6 +122,11 @@ function executeCommands(pythonProcess, data, globalStorage) {
         parseInt(args[0])
       );
       return pythonProcess.stdin.write(JSON.stringify(cline) + "\n");
+    case "ST":
+      vscode.window
+        .showTextDocument(vscode.Uri.file(args[0]), args[1])
+        .then((s) => pythonProcess.stdin.write(JSON.stringify(s) + "\n"));
+      break;
     default:
       console.log("Couldn't parse this: " + data);
   }
@@ -125,15 +137,15 @@ let globalStorage = {}
 console.log("Youtube has been activated");
 let search = vscode.commands.registerCommand('youtube.search',async function () {
 let funcName = "search"; let pyVar = "python";
-let py = spawn(pyVar, [pythonPath, funcName]);
+        let py = spawn(pyVar, [pythonPath, funcName]);
 
-py.stdout.on("data", (data) => {
-    executeCommands(py, data, globalStorage);
-});
-py.stderr.on("data", (data) => {
-    console.error(`An Error occurred in the python script: ${data}`);
-});
-});
+        py.stdout.on("data", (data) => {
+            executeCommands(py, data, globalStorage);
+        });
+        py.stderr.on("data", (data) => {
+            console.error(`An Error occurred in the python script: ${data}`);
+        });
+        });
 context.subscriptions.push(search);
 }
 
